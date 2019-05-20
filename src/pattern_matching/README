@@ -1,0 +1,5 @@
+Solution is provided in python2.7, there is also a unit test file provided which captures both the basic sample inputs
+required by the problem statement to solve, and more robust inputs that I've created. Test inputs are also provided in plain text (input_file*) along with
+their results (output_file*) when running from bash e.g. cat input_file_robust | python2.7 pattern_match.py > output_file_robust
+
+Running time for the find_best_match_pattern method is O(n^2logn), over-all is O(n^3logn)

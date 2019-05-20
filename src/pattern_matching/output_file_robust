@@ -1,0 +1,8 @@
+w,x,*,z
+a,*,*
+123,*,*
+foo
+NO MATCH
+foo,bar,baz
+foo,bar,baz
+123
