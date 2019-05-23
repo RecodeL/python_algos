@@ -46,7 +46,7 @@ def match(board, r, c, word):
     return scan_up or scan_down or scan_left or scan_right \
            or scan_ul or scan_ur or scan_ll or scan_lr
 
-def find_words(board, target_words):
+def find_words_naive(board, target_words):
     matched_words = set()
     n = len(board)
     for word in target_words:
@@ -58,10 +58,59 @@ def find_words(board, target_words):
                         matched_words.add(word)
     return matched_words
 
+def match_word(word_to_match, target_words):
+    for word in target_words:
+        if word_to_match == word:
+            return True
+    return False
+
+def _find_words(board, row, col, target_words, matched_words, word, visited):
+    visited[row][col] = True  # mark the cell as visited
+    word += board[row][col]
+    n = len(board)
+    if match_word(word, target_words):
+        matched_words.add(word)
+
+    # DFS on the adjacent cells
+    # be careful with the indexing here, want to traverse neighboring next_row (either up or down) within the boundary [0, n), and [row-1, row+2)
+    # same treatment is needed for next_col
+    for next_row in xrange(row-1, row+2, 1):
+        if 0 <= next_row < n:
+            for next_col in xrange(col-1, col+2, 1):
+                if 0 <= next_col < n and not visited[next_row][next_col]:
+                    _find_words(board, next_row, next_col, target_words, matched_words, word, visited)
+    visited[row][col] = False  # reset the visited cell
+
+def find_words(board, target_words):
+    """
+        return a set of words match any word in the target words
+    :param board:
+    :param target_words:
+    :return:
+    """
+    matched_words = set()
+    n = len(board)
+    word = ''  # empty string to construct word
+    # visited = [n * [False]] * n # this initialization actually has a funny bug
+    visited = [[False] * n for _ in xrange(n)]  # tracker for each cell visited
+    for row in xrange(0, n, 1):
+        for col in xrange(0, n, 1):
+            _find_words(board, row, col, target_words, matched_words, word, visited)
+    return matched_words
 
 if __name__ == "__main__":
     board =  [["a", "p", "n"],
               ["p", "i", "u"],
               ["p", "n", "r"]]
     target_words = ["app", "boy", "pin", "run", "air", "urn", "pineapple"]
+
+    print "-------Naive implementation, urn should be omitted---------"
+    print find_words_naive(board, target_words)
+    print "-------Efficient implementation---------"
     print find_words(board, target_words)
+
+    print "------Let's try a more interesting board to find the pineapple-----"
+    new_board =  [["a", "p", "p"],
+                  ["e", "p", "l"],
+                  ["n", "i", "e"]]
+    print find_words(new_board, target_words)
